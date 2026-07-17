@@ -17,7 +17,7 @@ from agent.models import IngestionConfig, IngestionResult
 # Import the PDF extractor
 from .extract_files import create_pdf_extractor, PDFExtractionConfig
 from .chunker import ChunkingConfig, DocumentChunk, create_chunker
-from agent.providers import get_embedding_model
+from agent.providers import get_embedding_api_key, get_embedding_base_url, get_embedding_model
 
 # Load environment variables
 load_dotenv()
@@ -227,7 +227,11 @@ class DocumentIngestionPipeline:
 
     async def aembed_chunks(self, chunks: List[DocumentChunk], model: str = "text-embedding-3-small") -> List[DocumentChunk]:
         """Generate embeddings for chunks (LangChain handles batching internally)."""
-        embeddings = OpenAIEmbeddings(model=model)
+        embeddings = OpenAIEmbeddings(
+            model=model,
+            api_key=get_embedding_api_key(),
+            base_url=get_embedding_base_url()
+        )
 
         # Tüm chunk içeriklerini al
         texts = [chunk.content for chunk in chunks]

@@ -45,6 +45,13 @@ async def stream_chat(message: str, base_url: str):
 
     async with aiohttp.ClientSession() as session:
         async with session.post(f"{base_url}/chat/stream", json=request_data) as resp:
+            if resp.status >= 400:
+                error_text = await resp.text()
+                full_response = f"API request failed: HTTP {resp.status}\n\n{error_text}"
+                response_box.error(full_response)
+                st.session_state.messages.append({"role": "assistant", "content": full_response})
+                return
+
             async for line in resp.content:
                 line = line.decode("utf-8").strip()
                 if not line.startswith("data: "):
@@ -72,6 +79,11 @@ async def stream_chat(message: str, base_url: str):
                     response_box.write(full_response)
                     
                 elif data.get("type") == "end":
+                    break
+
+                elif data.get("type") == "error":
+                    full_response = data.get("content", "Unknown stream error")
+                    response_box.error(full_response)
                     break
 
     response_box.write(full_response)
