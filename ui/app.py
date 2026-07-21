@@ -13,7 +13,7 @@ APP_PORT = int(os.getenv("APP_PORT", 8000))
 
 API_URL = os.getenv("API_URL", f"http://localhost:{APP_PORT}")
 
-st.set_page_config(page_title="Agentic RAG", page_icon="🤖", layout="wide")
+st.set_page_config(page_title="RAG", page_icon="🤖", layout="wide")
 USER_ID = "user"
 
 # Session state init
@@ -113,7 +113,7 @@ with st.sidebar:
     st.divider()
 
 # Main chat
-st.title("Agentic RAG")
+st.title("RAG")
 
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
